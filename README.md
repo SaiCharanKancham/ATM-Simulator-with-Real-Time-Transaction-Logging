@@ -252,7 +252,8 @@ The keypad is used for:
 - Changing account PIN.
 - Entering RTC date and time values.
 
-**Driver files:** `kpm.c`, `kpm.h`
+<img width="2196" height="1764" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/c5fbed05-8a67-455f-9a91-3819c79ad1ed" />
+
 ---
 
 ## 3. Real-Time Clock (RTC)
