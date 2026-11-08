@@ -231,15 +231,8 @@ All Rows?  Debouncing
 
 ### LPC2148 Interfacing
 
-**Insert the actual keypad-to-LPC2148 GPIO connection diagram here.**
+<img width="1500" height="920" alt="lpc2148_keypad_all_8_gpio_connections" src="https://github.com/user-attachments/assets/17d50e81-e64f-4d12-8eb9-c2ee173b1b3b" />
 
-Document the following:
-
-- Row GPIO configuration.
-- Column GPIO configuration.
-- PINSEL configuration if required.
-- IODIR register configuration.
-- Key scanning implementation.
 
 ### Application in ATM Project
 
@@ -252,7 +245,6 @@ The keypad is used for:
 - Changing account PIN.
 - Entering RTC date and time values.
 
-<img width="2196" height="1764" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/c5fbed05-8a67-455f-9a91-3819c79ad1ed" />
 
 ---
 
