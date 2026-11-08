@@ -1,300 +1,401 @@
-# ATM-Simulator-with-Real-Time-Transaction-Logging
 # ATM Simulator with Real-Time Transaction Logging
 
-An embedded ATM simulation project developed using the **ARM7 LPC2148 microcontroller**, designed to perform basic ATM operations with PIN-based authentication, RTC-based date and time management, and UART-based real-time transaction logging.
+An ARM7-based embedded ATM simulation developed using the LPC2148 microcontroller and Embedded C. The project integrates multiple hardware peripherals to implement ATM operations, PIN authentication, RTC-based date and time management, and UART-based transaction logging.
 
-The project demonstrates practical implementation of embedded C programming, peripheral interfacing, interrupt handling, modular driver development, and hardware-level system integration.
+The primary objective of this project is to understand how individual microcontroller peripherals work and how they can be integrated into a complete embedded application.
 
 ---
 
-## 📌 Table of Contents
+# 📑 Table of Contents
 
 1. [Project Overview](#-project-overview)
 2. [Project Objectives](#-project-objectives)
 3. [Hardware Requirements](#-hardware-requirements)
 4. [Software Requirements](#-software-requirements)
 5. [System Architecture](#-system-architecture)
-6. [Hardware Interfacing](#-hardware-interfacing)
-7. [Features](#-features)
-8. [ATM Operations](#-atm-operations)
-9. [System Working Flow](#-system-working-flow)
-10. [PIN Authentication and Security](#-pin-authentication-and-security)
-11. [RTC-Based Date and Time Management](#-rtc-based-date-and-time-management)
-12. [Real-Time Transaction Logging](#-real-time-transaction-logging)
-13. [Interrupt Handling](#-interrupt-handling)
-14. [Software Architecture](#-software-architecture)
-15. [Project Directory Structure](#-project-directory-structure)
-16. [Embedded Concepts Implemented](#-embedded-concepts-implemented)
-17. [Simulation and Testing](#-simulation-and-testing)
-18. [Applications](#-applications)
-19. [Limitations](#-limitations)
-20. [Future Improvements](#-future-improvements)
-21. [Learning Outcomes](#-learning-outcomes)
-22. [Author](#-author)
+6. [Peripheral Documentation](#-peripheral-documentation)
+   - [16×2 LCD Interfacing](#1-16x2-lcd-interfacing)
+   - [4×4 Matrix Keypad Interfacing](#2-4x4-matrix-keypad-interfacing)
+   - [Real-Time Clock (RTC)](#3-real-time-clock-rtc)
+   - [UART Communication](#4-uart-communication)
+   - [External Interrupts](#5-external-interrupts)
+7. [ATM Application Features](#-atm-application-features)
+8. [PIN Authentication](#-pin-authentication)
+9. [Transaction Logging](#-transaction-logging)
+10. [Complete System Working Flow](#-complete-system-working-flow)
+11. [Software Architecture](#-software-architecture)
+12. [Project Directory Structure](#-project-directory-structure)
+13. [Testing and Results](#-testing-and-results)
+14. [Limitations](#-limitations)
+15. [Future Improvements](#-future-improvements)
+16. [Learning Outcomes](#-learning-outcomes)
+17. [Author](#-author)
 
 ---
 
-## 📖 Project Overview
+# 📖 Project Overview
 
-The ATM Simulator is an embedded systems project that replicates the basic functionality of an Automated Teller Machine using an ARM7-based LPC2148 microcontroller.
+The ATM Simulator is an embedded systems application developed using the LPC2148 ARM7 microcontroller.
 
-The system provides an interactive interface through a 16×2 LCD and a 4×4 matrix keypad. Users can authenticate themselves using an account number and PIN before accessing ATM services.
+The system provides an interactive interface through a 16×2 LCD and a 4×4 matrix keypad. Users can enter their account number and PIN to access different ATM services.
 
-The system supports balance enquiry, cash withdrawal, cash deposit, PIN modification, and transaction history.
+The application supports balance enquiry, cash withdrawal, cash deposit, PIN modification, and mini statement generation.
 
-An onboard Real-Time Clock (RTC) maintains date and time information. Transaction details are transmitted through UART, allowing transaction activities to be monitored through a serial terminal.
+The internal Real-Time Clock maintains the current date and time, while UART communication is used to transmit transaction details to a serial terminal.
 
-## 🎯 Project Objectives
+The project follows a modular programming approach, where each peripheral has a separate driver module and the ATM application manages the overall system functionality.
 
-- Develop an ATM simulation using an ARM7 microcontroller.
-- Implement account and PIN-based authentication.
-- Interface LCD and matrix keypad with LPC2148.
-- Implement different ATM banking operations.
-- Maintain date and time using the internal RTC.
-- Record transaction details through UART communication.
-- Implement interrupt-based date and time modification.
-- Develop reusable peripheral drivers and modular application code.
-- Understand embedded system integration through hardware simulation.
+# 🎯 Project Objectives
 
-## 🔧 Hardware Requirements
+- Understand ARM7 LPC2148 microcontroller architecture.
+- Develop reusable peripheral drivers using Embedded C.
+- Interface LCD and matrix keypad with GPIO.
+- Understand RTC configuration and operation.
+- Implement UART serial communication.
+- Configure and handle external interrupts.
+- Develop PIN-based authentication.
+- Implement basic ATM banking operations.
+- Maintain transaction information with timestamps.
+- Integrate multiple peripherals into a single embedded application.
+
+# 🔧 Hardware Requirements
 
 | Component | Purpose |
 |---|---|
-| LPC2148 | ARM7 microcontroller |
-| 16×2 LCD | Displaying ATM messages |
+| LPC2148 ARM7 | Main microcontroller |
+| 16×2 LCD | Display interface |
 | 4×4 Matrix Keypad | User input |
-| RTC | Maintaining date and time |
+| Internal RTC | Date and time management |
 | UART | Serial transaction logging |
-| Computer | Simulation and serial monitoring |
+| Computer | Development and monitoring |
 
-## 💻 Software Requirements
+# 💻 Software Requirements
 
 | Software | Purpose |
 |---|---|
 | Keil µVision | Embedded C development |
-| Proteus | Circuit simulation |
-| GCC / ARM toolchain | ARM compilation (where applicable) |
-| Serial Terminal | Monitoring UART output |
+| Proteus | Hardware simulation |
+| Serial Terminal | UART monitoring |
+| ARM Toolchain | Compilation and debugging |
 
-## 🏗️ System Architecture
+# 🏗️ System Architecture
 
-The project follows a modular embedded software architecture. Each peripheral and application functionality is separated into dedicated modules.
-
-**System architecture:**
+The LPC2148 acts as the central controller and coordinates communication between different peripherals.
 
 ```text
-              LPC2148 ARM7
-                   |
-       +-----------+-----------+
-       |           |           |
-      LCD         KPM         RTC
-       |           |           |
-   16×2 LCD     4×4 Keypad  Date & Time
-                   |
-             ATM Application
-                   |
-       +-----------+-----------+
-       |           |           |
-   Account      PIN         ATM Services
- Verification Verification      |
-                              +-- Balance
-                              +-- Withdraw
-                              +-- Deposit
-                              +-- Change PIN
-                              +-- Mini Statement
-                   |
-                  UART
-                   |
-             Serial Terminal
-                   |
-          Transaction Logging
+                  LPC2148 ARM7
+                       |
+       +---------------+----------------+
+       |               |                |
+      LCD            Keypad             RTC
+       |               |                |
+   16×2 Display    4×4 Matrix       Date & Time
+       |               |                |
+       +---------------+----------------+
+                       |
+                 ATM Application
+                       |
+       +---------------+----------------+
+       |               |                |
+   PIN Verification  ATM Services   RTC Editing
+                       |
+                 Transaction Data
+                       |
+                      UART
+                       |
+                Serial Terminal
+                       |
+               Transaction Logs
 ```
 
-## 🔌 Hardware Interfacing
+# 🔌 Peripheral Documentation
 
-### 1. LPC2148 ARM7 Microcontroller
+This section explains the working principles, internal operation, interfacing techniques, and practical implementation of each peripheral used in the project.
 
-The LPC2148 acts as the central processing unit of the project.
+Each peripheral is documented separately to make the hardware and software concepts easier to understand.
 
-Responsibilities:
-- Executes ATM application logic.
-- Controls peripheral communication.
-- Processes keypad inputs.
-- Updates LCD information.
-- Maintains RTC operations.
-- Handles external interrupts.
-- Transmits transaction information through UART.
+## 1. 16×2 LCD Interfacing
 
-### 2. 16×2 LCD Interfacing
+### Introduction
 
-The LCD provides a visual interface between the user and the ATM system.
+A 16×2 Liquid Crystal Display is an output device used to display information from a microcontroller.
 
-It displays:
-- Welcome messages.
-- Account number entry.
-- PIN verification status.
-- Available banking services.
-- Transaction results.
-- Balance information.
-- Date and time information.
+It consists of two rows, with each row capable of displaying 16 characters.
 
-### 3. 4×4 Matrix Keypad Interfacing
+In this project, the LCD provides the user interface for displaying ATM messages and operation results.
 
-The keypad allows users to interact with the ATM.
+### Working Principle
 
-It is used for:
-- Account number entry.
-- PIN entry.
-- Selecting ATM services.
+The LCD receives commands and data from the microcontroller.
+
+- Command mode configures LCD operations.
+- Data mode displays characters.
+- RS selects command or data mode.
+- EN enables the LCD to accept the transferred information.
+- Data pins carry the command or character information.
+
+### LCD Interfacing Diagram
+
+**Insert LCD pin configuration and LPC2148 interfacing circuit diagram here.**
+
+### Important Signals
+
+| Signal | Function |
+|---|---|
+| RS | Selects command or data register |
+| RW | Selects read or write operation |
+| EN | Enables LCD operation |
+| D0–D7 | Data lines |
+| VSS | Ground |
+| VDD | Supply voltage |
+| VEE | Contrast adjustment |
+
+### Software Working Flow
+
+```text
+Initialize LCD
+      |
+Configure LCD Mode
+      |
+Send Initialization Commands
+      |
+Position Cursor
+      |
+Send Character Data
+      |
+Display Message
+```
+
+### Application in ATM Project
+
+The LCD is used to:
+
+- Display welcome messages.
+- Request account number and PIN.
+- Display ATM menu options.
+- Show account balance.
+- Display deposit and withdrawal results.
+- Display transaction status.
+- Show RTC date and time information.
+
+**Driver files:** `lcd.c`, `lcd.h`, `lcd_defines.h`
+
+---
+
+## 2. 4×4 Matrix Keypad Interfacing
+
+### Introduction
+
+A 4×4 matrix keypad is an input device consisting of 16 push buttons arranged in four rows and four columns.
+
+Each key is connected between one row and one column.
+
+Instead of using 16 individual GPIO pins, the keypad requires only eight GPIO pins.
+
+### Keypad Architecture
+
+**Insert the 4×4 matrix keypad image showing its row and column arrangement here.**
+
+### Working Principle
+
+The keypad operates using a row-column scanning technique.
+
+1. Configure row pins as outputs.
+2. Configure column pins as inputs.
+3. Activate one row at a time.
+4. Read the column inputs.
+5. Identify the pressed key using its row and column positions.
+6. Apply appropriate key debouncing.
+7. Return the detected key value to the application.
+
+### Keypad Scanning Flowchart
+
+```text
+       Start
+         |
+   Configure GPIO
+         |
+   Activate First Row
+         |
+   Read Column Inputs
+         |
+   Key Detected?
+      /     \
+    No       Yes
+    |         |
+Next Row   Identify Key
+    |         |
+All Rows?  Debouncing
+    |         |
+    +------ Return Key
+```
+
+### LPC2148 Interfacing
+
+**Insert the actual keypad-to-LPC2148 GPIO connection diagram here.**
+
+Document the following:
+
+- Row GPIO configuration.
+- Column GPIO configuration.
+- PINSEL configuration if required.
+- IODIR register configuration.
+- Key scanning implementation.
+
+### Application in ATM Project
+
+The keypad is used for:
+
+- Entering account numbers.
+- Entering four-digit PINs.
+- Selecting ATM menu options.
 - Entering deposit and withdrawal amounts.
-- Modifying PIN information.
-- Editing RTC date and time.
+- Changing account PIN.
+- Entering RTC date and time values.
 
-### 4. RTC Interfacing
+**Driver files:** `kpm.c`, `kpm.h`
 
-The internal RTC peripheral of LPC2148 maintains the current date and time.
+---
 
-It is used to associate transaction records with their corresponding date and time.
+## 3. Real-Time Clock (RTC)
 
-### 5. UART Interfacing
+### Introduction
 
-UART provides serial communication between the microcontroller and a computer.
+A Real-Time Clock is a peripheral used to maintain current date and time information.
 
-It is used to transmit transaction details for monitoring and debugging through a serial terminal.
+The LPC2148 contains an internal RTC peripheral that can maintain seconds, minutes, hours, days, months, and years.
 
-## ✨ Features
+### Working Principle
 
-- Account number verification.
-- Four-digit PIN authentication.
-- Three consecutive incorrect PIN attempts trigger a temporary account lock.
-- Balance enquiry.
-- Cash withdrawal.
-- Cash deposit.
-- PIN modification.
-- Mini statement with the latest two transactions.
-- RTC-based date and time management.
-- External interrupt-based RTC editing.
-- UART-based transaction logging.
-- Modular peripheral driver implementation.
-- Reusable application and service modules.
+The RTC uses a clock source and prescaler configuration to maintain time.
 
-## 🏦 ATM Operations
+It continuously updates the date and time registers.
 
-### 1. Balance Enquiry
+The application reads these registers whenever the current date or time is required.
 
-Displays the currently available account balance on the LCD.
+### RTC Architecture
 
-### 2. Cash Withdrawal
+**Insert the LPC2148 RTC block diagram here.**
 
-Allows the user to withdraw an amount from the available balance.
+### Important RTC Registers
 
-The system checks whether sufficient balance is available before completing the operation.
+| Register | Purpose |
+|---|---|
+| CCR | RTC clock control |
+| CIIR | Counter increment interrupt |
+| AMR | Alarm mask |
+| CTIME0 | Seconds, minutes and hours |
+| CTIME1 | Day, date and month |
+| CTIME2 | Year |
+| PREINT | Prescaler integer |
+| PREFRAC | Prescaler fractional |
 
-### 3. Cash Deposit
+### Prescaler Configuration
 
-Allows the user to deposit an amount and updates the available balance.
+Document the relationship between the RTC clock frequency and prescaler values.
 
-### 4. Change PIN
+The RTC prescaler configuration involves:
 
-Allows an authenticated user to modify the existing PIN.
+- PREINT – Prescaler integer register.
+- PREFRAC – Prescaler fractional register.
 
-### 5. Mini Statement
-
-Maintains and displays the latest two transaction records.
-
-The transaction history includes relevant transaction information such as operation type and amount.
-
-### 6. Exit
-
-Terminates the current ATM session and returns the system to its initial state.
-
-## 🔄 System Working Flow
+### RTC Working Flow
 
 ```text
-              System Initialization
-                       |
-                       v
-                Initialize LCD
-                       |
-                       v
-                Initialize KPM
-                       |
-                       v
-                Initialize RTC
-                       |
-                       v
-                Initialize UART
-                       |
-                       v
-               Verify RTC Date/Time
-                       |
-                       v
-              Enter Account Number
-                       |
-                       v
-                Verify Account
-                       |
-                       v
-                  Enter PIN
-                       |
-                       v
-               Verify PIN
-                       |
-             +---------+---------+
-             |                   |
-          Valid PIN          Invalid PIN
-             |                   |
-             v                   v
-         ATM Menu          Retry Attempts
-             |                   |
-             v             Three Failures?
-       Select Service            |
-             |                   v
-             v             Account Restart
-       Execute Service
-             |
-             v
-      Update Transaction
-             |
-             v
-       UART Log Output
-             |
-             v
-        Return to Menu
+Initialize RTC
+      |
+Configure Prescaler
+      |
+Enable RTC Clock
+      |
+Read Date and Time
+      |
+Convert Register Values
+      |
+Display on LCD
+      |
+Provide Timestamp to UART
 ```
 
-## 🔐 PIN Authentication and Security
+### Application in ATM Project
 
-The project implements account number and PIN verification before allowing access to ATM services.
+The RTC is used to:
 
-Security-related functionality includes:
+- Maintain current date and time.
+- Display date and time information.
+- Associate transaction records with timestamps.
+- Support date and time modification.
 
-- Account number verification.
-- Four-digit PIN authentication.
-- Maximum three consecutive incorrect PIN attempts.
-- Temporary account blocking after three failed attempts.
-- Restarting account verification without resetting the microcontroller.
-- PIN verification before accessing protected operations.
+**Driver files:** `rtc.c`, `rtc.h`
 
-## 🕒 RTC-Based Date and Time Management
+---
 
-The internal Real-Time Clock maintains date and time information.
+## 4. UART Communication
 
-RTC functionality includes:
+### Introduction
 
-- Reading the current date.
-- Reading the current time.
-- Displaying date and time information.
-- Associating transaction records with timestamps.
-- Editing date and time through an external interrupt mechanism.
+UART stands for Universal Asynchronous Receiver Transmitter.
 
-An external interrupt is used to enter the RTC editing procedure.
+It is a serial communication protocol used to transfer data between devices without a separate clock signal.
 
-## 📡 Real-Time Transaction Logging
+UART communication uses two primary signals:
 
-UART communication is used to transmit transaction information from the microcontroller to a serial terminal.
+- TX – Transmit data.
+- RX – Receive data.
 
-Whenever a transaction takes place, relevant information is collected and transmitted through the UART interface.
+### Working Principle
+
+UART transfers data in a serial format using a predefined baud rate.
+
+A typical UART frame contains:
+
+1. Start bit.
+2. Data bits.
+3. Optional parity bit.
+4. Stop bit or bits.
+
+Both communicating devices must use compatible communication settings.
+
+### UART Interfacing Diagram
+
+**Insert UART TX/RX connection diagram between LPC2148 and computer/USB-to-serial interface here.**
+
+### Important UART Registers
+
+| Register | Purpose |
+|---|---|
+| U0THR | Transmit holding register |
+| U0RBR | Receive buffer register |
+| U0DLL | Baud rate divisor latch low |
+| U0DLM | Baud rate divisor latch high |
+| U0LCR | Line control register |
+| U0LSR | Line status register |
+| U0FCR | FIFO control register |
+| U0IER | Interrupt enable register |
+
+### UART Working Flow
+
+```text
+Initialize UART
+      |
+Configure PINSEL
+      |
+Set Baud Rate
+      |
+Configure Frame Format
+      |
+Check Transmit Status
+      |
+Transmit Character
+      |
+Complete Data Transmission
+```
+
+### Application in ATM Project
+
+UART is used for real-time transaction monitoring.
+
+Whenever an ATM transaction occurs, the application collects relevant information and sends it to the serial terminal.
 
 Transaction information includes:
 
@@ -303,7 +404,7 @@ Transaction information includes:
 - Transaction date.
 - Transaction time.
 
-**Example serial terminal output:**
+### Example UART Output
 
 ```text
 --------------------------------
@@ -316,36 +417,155 @@ Date        : 08/11/2026
 Time        : 10:30:15
 
 --------------------------------
-
-Transaction : WITHDRAW
-Amount      : 500
-Date        : 08/11/2026
-Time        : 10:35:20
-
---------------------------------
 ```
 
-*Note: The above output is an illustrative example of the transaction log format.*
+**Driver files:** `uart.c`, `uart.h`, `uart_log.c`, `uart_log.h`
 
-## ⚡ Interrupt Handling
+---
 
-External interrupt functionality is implemented for RTC date and time modification.
+## 5. External Interrupts
 
-The interrupt mechanism allows the system to enter the RTC editing operation without continuously checking for a keypad input in the main application flow.
+### Introduction
 
-The interrupt service routine is designed to initiate the required operation while keeping interrupt processing as short as practical.
+An interrupt is a mechanism that temporarily changes the normal program execution flow when a particular event occurs.
 
-## 🧩 Software Architecture
+The LPC2148 supports external interrupt inputs that can be configured to respond to specific signal conditions.
 
-The application is divided into multiple modules to improve readability, maintainability, and code reusability.
+### Working Principle
 
-### Peripheral Driver Modules
+When a configured external interrupt event occurs:
+
+1. The microcontroller detects the interrupt.
+2. The interrupt controller identifies the interrupt source.
+3. The processor branches to the corresponding interrupt service routine.
+4. The ISR performs the required operation.
+5. The processor returns to the previous execution flow.
+
+### Interrupt Architecture
+
+**Insert LPC2148 VIC and external interrupt block diagram here.**
+
+### Important Registers
+
+| Register | Purpose |
+|---|---|
+| PINSEL | Configures pin functionality |
+| EXTINT | Clears external interrupt flags |
+| EXTMODE | Selects level or edge triggering |
+| EXTPOLAR | Selects interrupt polarity |
+| VICIntEnable | Enables interrupt sources |
+| VICVectAddr | Vector address configuration |
+
+### Interrupt Working Flow
+
+```text
+Normal Program Execution
+          |
+    External Event
+          |
+    Interrupt Detection
+          |
+    Execute ISR
+          |
+    Perform Required Action
+          |
+    Clear Interrupt Flag
+          |
+    Return from ISR
+```
+
+### Application in ATM Project
+
+An external interrupt is used to initiate RTC date and time editing.
+
+This provides an interrupt-driven mechanism for entering the RTC modification procedure instead of continuously checking for the event in the normal application flow.
+
+**Related files:** `rtc_edit.c`, `rtc_edit.h`, `main.c`
+
+---
+
+# 🏦 ATM Application Features
+
+The ATM application supports the following operations.
+
+| Operation | Description |
+|---|---|
+| Account Verification | Checks the entered account number |
+| PIN Verification | Validates the four-digit PIN |
+| Balance Enquiry | Displays available balance |
+| Cash Withdrawal | Deducts the requested amount |
+| Cash Deposit | Adds the deposited amount |
+| Change PIN | Modifies the existing PIN |
+| Mini Statement | Displays the latest two transactions |
+| Exit | Ends the current ATM session |
+
+# 🔐 PIN Authentication
+
+The application implements account number and PIN verification.
+
+Security features:
+
+- Account number validation.
+- Four-digit PIN verification.
+- Three consecutive incorrect PIN attempts.
+- Temporary account blocking after three failed attempts.
+- Account verification restart without resetting the microcontroller.
+
+# 📡 Transaction Logging
+
+Transaction logging is implemented using UART communication.
+
+The application collects transaction information and transmits it to the serial terminal.
+
+The internal RTC supplies the timestamp associated with the transaction.
+
+The latest two transactions are also maintained for the mini statement feature.
+
+# 🔄 Complete System Working Flow
+
+```text
+       System Initialization
+                |
+       Initialize Peripherals
+                |
+       Verify RTC Date/Time
+                |
+       Enter Account Number
+                |
+       Account Verification
+                |
+           Enter PIN
+                |
+         PIN Verification
+                |
+          Display Menu
+                |
+         Select Operation
+                |
+       Execute ATM Service
+                |
+        Update Account Data
+                |
+       Record Transaction
+                |
+         UART Logging
+                |
+        Return to Menu
+```
+
+# 🧩 Software Architecture
+
+The project follows a modular programming approach.
+
+Each peripheral has an independent driver module, while application-level modules handle ATM functionality.
+
+### Peripheral Drivers
 
 - LCD driver
 - Keypad driver
-- Delay driver
-- UART driver
 - RTC driver
+- UART driver
+- Delay driver
 
 ### Application Modules
 
@@ -355,135 +575,96 @@ The application is divided into multiple modules to improve readability, maintai
 - RTC editing
 - UART transaction logging
 
-Each module is responsible for a specific functionality, reducing dependency between different application components.
-
-## 📂 Project Directory Structure
+# 📂 Project Directory Structure
 
 ```text
 ATM-Simulator-with-Real-Time-Transaction-Logging/
 │
-├── main.c
+├── README.md
 │
-├── lcd.c
-├── lcd.h
-├── lcd_defines.h
+├── Drivers/
+│   ├── LCD/
+│   ├── Keypad/
+│   ├── RTC/
+│   ├── UART/
+│   └── Delay/
 │
-├── kpm.c
-├── kpm.h
+├── Application/
+│   ├── main.c
+│   ├── atm.c
+│   ├── atm.h
+│   ├── pin_verification.c
+│   ├── pin_verification.h
+│   ├── rtc_edit.c
+│   ├── rtc_edit.h
+│   ├── uart_log.c
+│   └── uart_log.h
 │
-├── delay.c
-├── delay.h
+├── Documentation/
+│   ├── LCD/
+│   ├── Keypad/
+│   ├── RTC/
+│   ├── UART/
+│   └── Interrupts/
 │
-├── rtc.c
-├── rtc.h
+├── Simulation/
 │
-├── rtc_edit.c
-├── rtc_edit.h
-│
-├── uart.c
-├── uart.h
-│
-├── uart_log.c
-├── uart_log.h
-│
-├── atm.c
-├── atm.h
-│
-├── pin_verification.c
-├── pin_verification.h
-│
-└── README.md
+└── Images/
 ```
 
-*The directory structure represents the logical module organization. Adjust filenames to match the actual files uploaded to the repository.*
+# 🧪 Testing and Results
 
-## 🧠 Embedded Concepts Implemented
-
-| Concept | Implementation |
-|---|---|
-| Embedded C | Complete application development |
-| ARM7 Architecture | LPC2148 microcontroller |
-| GPIO | LCD and keypad interfacing |
-| LCD Interfacing | Display operations |
-| Matrix Keypad | User input |
-| RTC | Date and time management |
-| UART | Transaction logging |
-| Interrupts | RTC editing |
-| Modular Programming | Separate driver and application modules |
-| Header Guards | Preventing multiple header inclusions |
-| String Handling | Account and PIN processing |
-| State Management | ATM operation flow |
-| Data Management | Balance and transaction history |
-
-## 🧪 Simulation and Testing
-
-The project is developed and tested using embedded development and simulation tools.
-
-Testing covers the following operations:
+The following test cases are used to validate the application.
 
 | Test Case | Expected Result |
 |---|---|
-| Valid account number | Account verification successful |
-| Invalid account number | Access denied |
+| Correct account number | Account accepted |
+| Incorrect account number | Access rejected |
 | Correct PIN | ATM menu displayed |
 | Incorrect PIN | Retry message displayed |
-| Three incorrect PIN attempts | Temporary account blocking |
-| Balance enquiry | Available balance displayed |
+| Three failed PIN attempts | Temporary blocking |
+| Balance enquiry | Balance displayed |
 | Valid withdrawal | Balance updated |
-| Insufficient balance | Withdrawal rejected |
+| Insufficient balance | Transaction rejected |
 | Deposit | Balance updated |
-| Change PIN | New PIN stored |
+| Change PIN | New PIN accepted |
 | Mini statement | Latest two transactions displayed |
-| RTC modification | Date and time updated |
-| UART logging | Transaction details transmitted |
+| RTC editing | Date/time modified |
+| UART transmission | Transaction log received |
 
-## 🌍 Applications
+# ⚠️ Limitations
 
-The concepts implemented in this project can be extended to:
-
-- Embedded banking terminals.
-- Digital payment terminals.
-- Microcontroller-based transaction systems.
-- Access control systems.
-- Embedded data logging applications.
-- Real-time monitoring systems.
-
-## ⚠️ Limitations
-
-- This is an educational ATM simulation, not a production banking system.
-- Account and PIN information are maintained in microcontroller memory.
+- This is an educational ATM simulation.
+- Account details are maintained in microcontroller memory.
 - Transaction history is limited to the latest two records.
-- UART logging is intended for monitoring and demonstration.
-- No real cash dispenser or banking server integration is implemented.
-- The temporary account blocking mechanism is a demonstration feature, not a secure banking-grade lockout system.
+- UART logging is intended for serial monitoring.
+- No actual cash dispenser or banking server is integrated.
+- The authentication mechanism is not designed for production banking security.
 
-## 🚀 Future Improvements
+# 🚀 Future Improvements
 
-- Integrate EEPROM or external Flash for persistent account storage.
-- Implement multiple user accounts.
-- Add an SD card for permanent transaction storage.
-- Implement a real cash dispensing mechanism.
-- Add a communication interface to a banking server.
-- Implement encrypted authentication.
+- Add EEPROM-based account storage.
+- Support multiple user accounts.
+- Add SD card-based transaction storage.
+- Integrate an actual cash dispensing mechanism.
+- Add encrypted authentication.
+- Implement a graphical transaction monitoring interface.
 - Extend transaction history storage.
-- Add a real-time transaction monitoring interface.
 
-## 📚 Learning Outcomes
+# 📚 Learning Outcomes
 
-Through this project, I gained practical experience in:
+- ARM7 LPC2148 microcontroller programming.
+- Embedded C application development.
+- GPIO configuration and peripheral interfacing.
+- LCD and matrix keypad driver development.
+- RTC configuration and time management.
+- UART serial communication.
+- External interrupt configuration.
+- Modular programming and reusable drivers.
+- Hardware simulation and debugging.
+- Integration of multiple peripherals into one embedded application.
 
-- Developing embedded applications using Embedded C.
-- Working with the ARM7 LPC2148 microcontroller.
-- Interfacing LCD and matrix keypad peripherals.
-- Understanding RTC configuration and operation.
-- Implementing UART serial communication.
-- Working with external interrupts.
-- Designing reusable peripheral drivers.
-- Organizing embedded applications into independent modules.
-- Debugging and testing microcontroller-based applications.
-- Integrating multiple peripherals into a single embedded application.
-
-## 👨‍💻 Author
+# 👨‍💻 Author
 
 **Sai Charan Kancham**
 
@@ -496,10 +677,4 @@ Electronics and Communication Engineering
 
 ---
 
-⭐ If you find this project useful, feel free to explore the repository and share your feedback.
-
-**Project:** ATM Simulator with Real-Time Transaction Logging
-
-**Platform:** ARM7 – LPC2148
-
-**Programming Language:** Embedded C
+⭐ If you find this project useful, feel free to explore the source code and documentation.
