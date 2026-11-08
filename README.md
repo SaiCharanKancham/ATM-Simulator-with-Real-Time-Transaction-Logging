@@ -75,8 +75,6 @@ The project follows a modular programming approach, where each peripheral has a 
 |---|---|
 | Keil µVision | Embedded C development |
 | Proteus | Hardware simulation |
-| Serial Terminal | UART monitoring |
-| ARM Toolchain | Compilation and debugging |
 
 # 🏗️ System Architecture
 
@@ -136,7 +134,7 @@ The LCD receives commands and data from the microcontroller.
 
 ### LCD Interfacing Diagram
 
-**Insert LCD pin configuration and LPC2148 interfacing circuit diagram here.**
+<img width="500" height="400" alt="16x2-Character-LCD-Display-Pinout" src="https://github.com/user-attachments/assets/cf55dc34-04b4-4f3b-b7dc-c7559dd4f9c4" />
 
 ### Important Signals
 
@@ -194,7 +192,8 @@ Instead of using 16 individual GPIO pins, the keypad requires only eight GPIO pi
 
 ### Keypad Architecture
 
-**Insert the 4×4 matrix keypad image showing its row and column arrangement here.**
+<img width="934" height="1038" alt="image" src="https://github.com/user-attachments/assets/0aec709b-de97-4eea-84c1-28268478e28e" />
+
 
 ### Working Principle
 
