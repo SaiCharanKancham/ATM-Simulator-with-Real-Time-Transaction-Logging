@@ -349,7 +349,8 @@ Both communicating devices must use compatible communication settings.
 
 ### UART Interfacing Diagram
 
-**Insert UART TX/RX connection diagram between LPC2148 and computer/USB-to-serial interface here.**
+<img width="1024" height="572" alt="image" src="https://github.com/user-attachments/assets/915818ca-806f-4a28-b6b8-927869b3069f" />
+
 
 ### Important UART Registers
 
