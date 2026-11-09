@@ -398,21 +398,6 @@ Transaction information includes:
 
 ### Example UART Output
 
-```text
---------------------------------
-       ATM TRANSACTION LOG
---------------------------------
-
-Transaction : DEPOSIT
-Amount      : 1000
-Date        : 08/11/2026
-Time        : 10:30:15
-
---------------------------------
-```
-
-**Driver files:** `uart.c`, `uart.h`, `uart_log.c`, `uart_log.h`
-
 ---
 
 ## 5. External Interrupts
