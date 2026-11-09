@@ -80,34 +80,7 @@ The project follows a modular programming approach, where each peripheral has a 
 
 The LPC2148 acts as the central controller and coordinates communication between different peripherals.
 
-```text
-                  LPC2148 ARM7
-                       |
-       +---------------+----------------+
-       |               |                |
-      LCD            Keypad             RTC
-       |               |                |
-   16×2 Display    4×4 Matrix       Date & Time
-       |               |                |
-       +---------------+----------------+
-                       |
-                 ATM Application
-                       |
-       +---------------+----------------+
-       |               |                |
-   PIN Verification  ATM Services   RTC Editing
-                       |
-                 Transaction Data
-                       |
-                      UART
-                       |
-                Serial Terminal
-                       |
-               Transaction Logs
-```
 <img width="1024" height="661" alt="image" src="https://github.com/user-attachments/assets/bab64901-fa39-4856-a421-779ed764c83c" />
-
-
 
 # 🔌 Peripheral Documentation
 
