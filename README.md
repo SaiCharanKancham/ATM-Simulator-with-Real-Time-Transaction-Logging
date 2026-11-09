@@ -264,32 +264,6 @@ It continuously updates the date and time registers.
 
 The application reads these registers whenever the current date or time is required.
 
-### RTC Architecture
-
-**Insert the LPC2148 RTC block diagram here.**
-
-### Important RTC Registers
-
-| Register | Purpose |
-|---|---|
-| CCR | RTC clock control |
-| CIIR | Counter increment interrupt |
-| AMR | Alarm mask |
-| CTIME0 | Seconds, minutes and hours |
-| CTIME1 | Day, date and month |
-| CTIME2 | Year |
-| PREINT | Prescaler integer |
-| PREFRAC | Prescaler fractional |
-
-### Prescaler Configuration
-
-Document the relationship between the RTC clock frequency and prescaler values.
-
-The RTC prescaler configuration involves:
-
-- PREINT – Prescaler integer register.
-- PREFRAC – Prescaler fractional register.
-
 ### RTC Working Flow
 
 ```text
@@ -316,8 +290,6 @@ The RTC is used to:
 - Display date and time information.
 - Associate transaction records with timestamps.
 - Support date and time modification.
-
-**Driver files:** `rtc.c`, `rtc.h`
 
 ---
 
@@ -396,10 +368,6 @@ Transaction information includes:
 - Transaction date.
 - Transaction time.
 
-### Example UART Output
-
----
-
 ## 5. External Interrupts
 
 ### Introduction
@@ -417,10 +385,6 @@ When a configured external interrupt event occurs:
 3. The processor branches to the corresponding interrupt service routine.
 4. The ISR performs the required operation.
 5. The processor returns to the previous execution flow.
-
-### Interrupt Architecture
-
-**Insert LPC2148 VIC and external interrupt block diagram here.**
 
 ### Important Registers
 
@@ -456,8 +420,6 @@ Normal Program Execution
 An external interrupt is used to initiate RTC date and time editing.
 
 This provides an interrupt-driven mechanism for entering the RTC modification procedure instead of continuously checking for the event in the normal application flow.
-
-**Related files:** `rtc_edit.c`, `rtc_edit.h`, `main.c`
 
 ---
 
