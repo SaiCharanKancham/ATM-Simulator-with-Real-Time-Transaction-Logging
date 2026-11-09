@@ -1,6 +1,6 @@
 # ATM Simulator with Real-Time Transaction Logging
 
-An ARM7-based embedded ATM simulation developed using the LPC2148 microcontroller and Embedded C. The project integrates multiple hardware peripherals to implement ATM operations, PIN authentication, RTC-based date and time management, and UART-based transaction logging.
+An ARM7-based embedded ATM Simulator developed using the LPC2148 microcontroller and Embedded C. The project integrates multiple hardware peripherals to implement ATM operations, PIN authentication, RTC-based date and time management, and UART-based transaction logging.
 
 The primary objective of this project is to understand how individual microcontroller peripherals work and how they can be integrated into a complete embedded application.
 
