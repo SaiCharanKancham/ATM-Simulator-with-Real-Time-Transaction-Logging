@@ -151,9 +151,6 @@ The LCD is used to:
 - Display deposit and withdrawal results.
 - Display transaction status.
 - Show RTC date and time information.
-
-**Driver files:** `lcd.c`, `lcd.h`, `lcd_defines.h`
-
 ---
 
 ## 2. 4×4 Matrix Keypad Interfacing
@@ -183,28 +180,6 @@ The keypad operates using a row-column scanning technique.
 6. Apply appropriate key debouncing.
 7. Return the detected key value to the application.
 
-### Keypad Scanning Flowchart
-
-```text
-       Start
-         |
-   Configure GPIO
-         |
-   Activate First Row
-         |
-   Read Column Inputs
-         |
-   Key Detected?
-      /     \
-    No       Yes
-    |         |
-Next Row   Identify Key
-    |         |
-All Rows?  Debouncing
-    |         |
-    +------ Return Key
-```
-
 ### LPC2148 Interfacing
 
 <img width="1500" height="920" alt="lpc2148_keypad_all_8_gpio_connections" src="https://github.com/user-attachments/assets/17d50e81-e64f-4d12-8eb9-c2ee173b1b3b" />
@@ -220,7 +195,6 @@ The keypad is used for:
 - Entering deposit and withdrawal amounts.
 - Changing account PIN.
 - Entering RTC date and time values.
-
 
 ---
 
