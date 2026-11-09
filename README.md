@@ -105,6 +105,8 @@ The LPC2148 acts as the central controller and coordinates communication between
                        |
                Transaction Logs
 ```
+![Uploading image.png…]()
+
 
 # 🔌 Peripheral Documentation
 
