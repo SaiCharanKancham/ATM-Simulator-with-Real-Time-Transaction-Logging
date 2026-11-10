@@ -13,23 +13,25 @@ The primary objective of this project is to understand how individual microcontr
 3. [Hardware Requirements](#-hardware-requirements)
 4. [Software Requirements](#-software-requirements)
 5. [System Architecture](#-system-architecture)
-6. [Peripheral Documentation](#-peripheral-documentation)
+6. [Hardware Implementation](#-hardware-implementation)
+7. [Peripheral Documentation](#-peripheral-documentation)
    - [16×2 LCD Interfacing](#1-16x2-lcd-interfacing)
    - [4×4 Matrix Keypad Interfacing](#2-4x4-matrix-keypad-interfacing)
    - [Real-Time Clock (RTC)](#3-real-time-clock-rtc)
    - [UART Communication](#4-uart-communication)
    - [External Interrupts](#5-external-interrupts)
-7. [ATM Application Features](#-atm-application-features)
-8. [PIN Authentication](#-pin-authentication)
-9. [Transaction Logging](#-transaction-logging)
-10. [Complete System Working Flow](#-complete-system-working-flow)
-11. [Software Architecture](#-software-architecture)
-12. [Project Directory Structure](#-project-directory-structure)
-13. [Testing and Results](#-testing-and-results)
-14. [Limitations](#-limitations)
-15. [Future Improvements](#-future-improvements)
-16. [Learning Outcomes](#-learning-outcomes)
-17. [Author](#-author)
+8. [ATM Application Features](#-atm-application-features)
+9. [PIN Authentication](#-pin-authentication)
+10. [Transaction Logging](#-transaction-logging)
+11. [UART-Based Log File Generation](#-uart-based-log-file-generation)
+12. [Complete System Working Flow](#-complete-system-working-flow)
+13. [Software Architecture](#-software-architecture)
+14. [Project Directory Structure](#-project-directory-structure)
+15. [Testing and Results](#-testing-and-results)
+16. [Limitations](#-limitations)
+17. [Future Improvements](#-future-improvements)
+18. [Learning Outcomes](#-learning-outcomes)
+19. [Author](#-author)
 
 ---
 
@@ -41,7 +43,9 @@ The system provides an interactive interface through a 16×2 LCD and a 4×4 matr
 
 The application supports balance enquiry, cash withdrawal, cash deposit, PIN modification, and mini statement generation.
 
-The internal Real-Time Clock maintains the current date and time, while UART communication is used to transmit transaction details to a serial terminal.
+The internal Real-Time Clock maintains the current date and time, while UART communication is used to transmit transaction details to a computer through a serial interface.
+
+The received UART data is monitored using Windows XP HyperTerminal and captured into a log file for transaction record maintenance.
 
 The project follows a modular programming approach, where each peripheral has a separate driver module and the ATM application manages the overall system functionality.
 
@@ -56,6 +60,9 @@ The project follows a modular programming approach, where each peripheral has a 
 - Develop PIN-based authentication.
 - Implement basic ATM banking operations.
 - Maintain transaction information with timestamps.
+- Transfer transaction information to a computer using UART.
+- Monitor serial communication using HyperTerminal.
+- Capture and maintain transaction records in a log file.
 - Integrate multiple peripherals into a single embedded application.
 
 # 🔧 Hardware Requirements
@@ -66,8 +73,10 @@ The project follows a modular programming approach, where each peripheral has a 
 | 16×2 LCD | Display interface |
 | 4×4 Matrix Keypad | User input |
 | Internal RTC | Date and time management |
-| UART | Serial transaction logging |
-| Computer | Development and monitoring |
+| UART Interface | Serial transaction logging |
+| External Interrupt Switch | Initiates RTC date and time editing |
+| Computer | Serial monitoring and log file generation |
+| USB-to-Serial Interface | Serial communication with computer |
 
 # 💻 Software Requirements
 
@@ -75,12 +84,35 @@ The project follows a modular programming approach, where each peripheral has a 
 |---|---|
 | Keil µVision | Embedded C development |
 | Proteus | Hardware simulation |
+| Windows XP | Serial communication environment |
+| HyperTerminal | UART monitoring and log file capture |
 
 # 🏗️ System Architecture
 
 The LPC2148 acts as the central controller and coordinates communication between different peripherals.
 
-<img width="1024" height="661" alt="image" src="https://github.com/user-attachments/assets/bab64901-fa39-4856-a421-779ed764c83c" />
+The LCD and matrix keypad provide the user interface, while the internal RTC maintains date and time information. UART is used to transmit transaction details to a computer for serial monitoring and logging.
+
+![System Architecture](https://github.com/user-attachments/assets/bab64901-fa39-4856-a421-779ed764c83c)
+
+# 🛠️ Hardware Implementation
+
+The ATM Simulator was implemented using an LPC2148 ARM7 development board interfaced with different peripherals.
+
+The following figure shows the physical hardware setup and peripheral connections used in the project.
+
+![Hardware Implementation](<img width="1080" height="1350" alt="ATM" src="https://github.com/user-attachments/assets/32b48237-27d3-46a3-8267-86546450cda7" />
+
+
+
+The hardware setup includes:
+
+- LPC2148 ARM7 development board.
+- 16×2 LCD for displaying ATM information.
+- 4×4 matrix keypad for user input.
+- UART interface for serial communication.
+- External interrupt switch for RTC modification.
+- USB power and communication connections.
 
 # 🔌 Peripheral Documentation
 
@@ -110,7 +142,7 @@ The LCD receives commands and data from the microcontroller.
 
 ### LCD Interfacing Diagram
 
-<img width="500" height="400" alt="16x2-Character-LCD-Display-Pinout" src="https://github.com/user-attachments/assets/cf55dc34-04b4-4f3b-b7dc-c7559dd4f9c4" />
+![16x2 LCD Pinout](https://github.com/user-attachments/assets/cf55dc34-04b4-4f3b-b7dc-c7559dd4f9c4)
 
 ### Important Signals
 
@@ -128,15 +160,15 @@ The LCD receives commands and data from the microcontroller.
 
 ```text
 Initialize LCD
-      |
+     |
 Configure LCD Mode
-      |
+     |
 Send Initialization Commands
-      |
+     |
 Position Cursor
-      |
+     |
 Send Character Data
-      |
+     |
 Display Message
 ```
 
@@ -151,6 +183,7 @@ The LCD is used to:
 - Display deposit and withdrawal results.
 - Display transaction status.
 - Show RTC date and time information.
+
 ---
 
 ## 2. 4×4 Matrix Keypad Interfacing
@@ -165,8 +198,7 @@ Instead of using 16 individual GPIO pins, the keypad requires only eight GPIO pi
 
 ### Keypad Architecture
 
-<img width="934" height="1038" alt="image" src="https://github.com/user-attachments/assets/0aec709b-de97-4eea-84c1-28268478e28e" />
-
+![4x4 Matrix Keypad Architecture](https://github.com/user-attachments/assets/0aec709b-de97-4eea-84c1-28268478e28e)
 
 ### Working Principle
 
@@ -182,8 +214,7 @@ The keypad operates using a row-column scanning technique.
 
 ### LPC2148 Interfacing
 
-<img width="1500" height="920" alt="lpc2148_keypad_all_8_gpio_connections" src="https://github.com/user-attachments/assets/17d50e81-e64f-4d12-8eb9-c2ee173b1b3b" />
-
+![LPC2148 Keypad Connections](https://github.com/user-attachments/assets/17d50e81-e64f-4d12-8eb9-c2ee173b1b3b)
 
 ### Application in ATM Project
 
@@ -218,17 +249,17 @@ The application reads these registers whenever the current date or time is requi
 
 ```text
 Initialize RTC
-      |
+     |
 Configure Prescaler
-      |
+     |
 Enable RTC Clock
-      |
+     |
 Read Date and Time
-      |
+     |
 Convert Register Values
-      |
+     |
 Display on LCD
-      |
+     |
 Provide Timestamp to UART
 ```
 
@@ -249,7 +280,7 @@ The RTC is used to:
 
 UART stands for Universal Asynchronous Receiver Transmitter.
 
-It is a serial communication protocol used to transfer data between devices without a separate clock signal.
+It is a serial communication mechanism used to transfer data between devices without a separate clock signal.
 
 UART communication uses two primary signals:
 
@@ -271,8 +302,7 @@ Both communicating devices must use compatible communication settings.
 
 ### UART Interfacing Diagram
 
-<img width="1024" height="572" alt="image" src="https://github.com/user-attachments/assets/915818ca-806f-4a28-b6b8-927869b3069f" />
-
+![UART Communication](https://github.com/user-attachments/assets/915818ca-806f-4a28-b6b8-927869b3069f)
 
 ### Important UART Registers
 
@@ -291,17 +321,17 @@ Both communicating devices must use compatible communication settings.
 
 ```text
 Initialize UART
-      |
+     |
 Configure PINSEL
-      |
+     |
 Set Baud Rate
-      |
+     |
 Configure Frame Format
-      |
+     |
 Check Transmit Status
-      |
+     |
 Transmit Character
-      |
+     |
 Complete Data Transmission
 ```
 
@@ -309,7 +339,7 @@ Complete Data Transmission
 
 UART is used for real-time transaction monitoring.
 
-Whenever an ATM transaction occurs, the application collects relevant information and sends it to the serial terminal.
+Whenever an ATM transaction occurs, the application collects relevant information and sends it to the computer through the UART interface.
 
 Transaction information includes:
 
@@ -317,6 +347,10 @@ Transaction information includes:
 - Transaction amount.
 - Transaction date.
 - Transaction time.
+
+The received information is displayed using Windows XP HyperTerminal and can be captured into a text file.
+
+---
 
 ## 5. External Interrupts
 
@@ -351,18 +385,18 @@ When a configured external interrupt event occurs:
 
 ```text
 Normal Program Execution
-          |
-    External Event
-          |
-    Interrupt Detection
-          |
-    Execute ISR
-          |
-    Perform Required Action
-          |
-    Clear Interrupt Flag
-          |
-    Return from ISR
+         |
+   External Event
+         |
+   Interrupt Detection
+         |
+      Execute ISR
+         |
+ Perform Required Action
+         |
+  Clear Interrupt Flag
+         |
+  Return from ISR
 ```
 
 ### Application in ATM Project
@@ -404,11 +438,81 @@ Security features:
 
 Transaction logging is implemented using UART communication.
 
-The application collects transaction information and transmits it to the serial terminal.
+Whenever an ATM transaction takes place, the application collects the relevant transaction information and transmits it to the computer through the UART interface.
 
 The internal RTC supplies the timestamp associated with the transaction.
 
-The latest two transactions are also maintained for the mini statement feature.
+The transaction information includes:
+
+- Transaction type.
+- Transaction amount.
+- Transaction date.
+- Transaction time.
+
+The latest two transactions are also maintained in the microcontroller memory for the mini statement feature.
+
+# 📁 UART-Based Log File Generation
+
+One of the important features of this project is maintaining transaction records on a computer using UART communication.
+
+### Communication Setup
+
+The LPC2148 development board is connected to the computer through a USB-to-Serial interface.
+
+Windows XP HyperTerminal is used to establish serial communication and monitor the transaction information transmitted by the microcontroller.
+
+### Working Procedure
+
+1. Initialize UART communication in the LPC2148.
+2. Configure the appropriate baud rate and serial frame format.
+3. Connect the LPC2148 UART TX signal to the computer's serial interface through the appropriate USB-to-Serial interface.
+4. Configure Windows XP HyperTerminal with matching serial communication settings.
+5. Execute ATM operations such as balance enquiry, withdrawal, and deposit.
+6. The microcontroller transmits transaction details through UART.
+7. HyperTerminal receives and displays the transmitted information.
+8. Use the HyperTerminal text capture feature to save the received serial data into a log file.
+
+### Log File Generation Flow
+
+```text
+ATM Transaction
+       |
+Collect Transaction Details
+       |
+Read RTC Date and Time
+       |
+Format Transaction Information
+       |
+Transmit Through UART
+       |
+Computer Serial Interface
+       |
+Windows XP HyperTerminal
+       |
+Display Received Information
+       |
+Capture Text to File
+       |
+Transaction Log File
+```
+
+### Transaction Log File
+
+The captured UART output is stored in a text file on the computer.
+
+The log file provides a record of ATM transactions along with their corresponding date and time information.
+
+**Log File:** `ATM_Transaction_Log.txt`
+
+The generated log file is included in the repository for reference.
+
+### Advantages
+
+- Provides transaction monitoring on a computer.
+- Maintains transaction records outside the microcontroller.
+- Demonstrates practical UART communication.
+- Helps verify the transmitted transaction information.
+- Provides a simple method for maintaining transaction history.
 
 # 🔄 Complete System Working Flow
 
@@ -438,6 +542,8 @@ The latest two transactions are also maintained for the mini statement feature.
        Record Transaction
                 |
          UART Logging
+                |
+       Capture Log on PC
                 |
         Return to Menu
 ```
@@ -496,9 +602,14 @@ ATM-Simulator-with-Real-Time-Transaction-Logging/
 │   ├── UART/
 │   └── Interrupts/
 │
-├── Simulation/
+├── Images/
+│   ├── Hardware_Implementation.png
+│   └── System_Architecture.png
 │
-└── Images/
+├── Logs/
+│   └── ATM_Transaction_Log.txt
+│
+└── Simulation/
 ```
 
 # 🧪 Testing and Results
@@ -520,6 +631,8 @@ The following test cases are used to validate the application.
 | Mini statement | Latest two transactions displayed |
 | RTC editing | Date/time modified |
 | UART transmission | Transaction log received |
+| HyperTerminal monitoring | Received data displayed |
+| Log file capture | Serial data saved to a text file |
 
 # ⚠️ Limitations
 
@@ -527,6 +640,7 @@ The following test cases are used to validate the application.
 - Account details are maintained in microcontroller memory.
 - Transaction history is limited to the latest two records.
 - UART logging is intended for serial monitoring.
+- Log file generation depends on the connected computer and serial terminal software.
 - No actual cash dispenser or banking server is integrated.
 - The authentication mechanism is not designed for production banking security.
 
@@ -539,6 +653,7 @@ The following test cases are used to validate the application.
 - Add encrypted authentication.
 - Implement a graphical transaction monitoring interface.
 - Extend transaction history storage.
+- Implement automated transaction log management.
 
 # 📚 Learning Outcomes
 
@@ -551,6 +666,9 @@ The following test cases are used to validate the application.
 - External interrupt configuration.
 - Modular programming and reusable drivers.
 - Hardware simulation and debugging.
+- Serial communication between microcontroller and computer.
+- HyperTerminal configuration and monitoring.
+- Capturing UART data into text log files.
 - Integration of multiple peripherals into one embedded application.
 
 # 👨‍💻 Author
