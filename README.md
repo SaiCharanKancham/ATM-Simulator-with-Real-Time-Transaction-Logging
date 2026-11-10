@@ -101,7 +101,7 @@ The ATM Simulator was implemented using an LPC2148 ARM7 development board interf
 
 The following figure shows the physical hardware setup and peripheral connections used in the project.
 
-![Hardware Implementation](<img width="1080" height="1350" alt="ATM" src="https://github.com/user-attachments/assets/32b48237-27d3-46a3-8267-86546450cda7" />
+<img width="1080" height="1350" alt="ATM" src="https://github.com/user-attachments/assets/32b48237-27d3-46a3-8267-86546450cda7" />
 
 
 
