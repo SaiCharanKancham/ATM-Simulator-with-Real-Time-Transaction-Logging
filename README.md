@@ -569,6 +569,7 @@ Each peripheral has an independent driver module, while application-level module
 
 # 📂 Project Directory Structure
 
+```text
 ATM-Simulator/
 │
 ├── header_files/
@@ -602,6 +603,7 @@ ATM-Simulator/
 │   └── ATM_Transaction_Log_Demonstration.mp4
 │
 └── README.md
+```
 # 🧪 Testing and Results
 
 The following test cases are used to validate the application.
