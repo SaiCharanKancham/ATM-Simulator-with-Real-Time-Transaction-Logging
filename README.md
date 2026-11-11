@@ -502,9 +502,6 @@ The captured UART output is stored in a text file on the computer.
 
 The log file provides a record of ATM transactions along with their corresponding date and time information.
 
-**Log File:** `ATM_Transaction_Log.txt`
-
-The generated log file is included in the repository for reference.
 
 ### Advantages
 
@@ -572,46 +569,39 @@ Each peripheral has an independent driver module, while application-level module
 
 # 📂 Project Directory Structure
 
-```text
-ATM-Simulator-with-Real-Time-Transaction-Logging/
+ATM-Simulator/
 │
-├── README.md
-│
-├── Drivers/
-│   ├── LCD/
-│   ├── Keypad/
-│   ├── RTC/
-│   ├── UART/
-│   └── Delay/
-│
-├── Application/
-│   ├── main.c
-│   ├── atm.c
+├── header_files/
 │   ├── atm.h
-│   ├── pin_verification.c
-│   ├── pin_verification.h
-│   ├── rtc_edit.c
+│   ├── defines.h
+│   ├── delay.h
+│   ├── kpm.h
+│   ├── kpm_defines.h
+│   ├── lcd.h
+│   ├── lcd_defines.h
+│   ├── rtc.h
 │   ├── rtc_edit.h
-│   ├── uart_log.c
+│   ├── types.h
+│   ├── uart.h
 │   └── uart_log.h
 │
-├── Documentation/
-│   ├── LCD/
-│   ├── Keypad/
-│   ├── RTC/
-│   ├── UART/
-│   └── Interrupts/
+├── source_files/
+│   ├── atm_services.c
+│   ├── delay_def.c
+│   ├── kpm.c
+│   ├── lcd.c
+│   ├── main.c
+│   ├── rtc.c
+│   ├── rtc_edit.c
+│   ├── uart.c
+│   └── uart_log.c
 │
-├── Images/
-│   ├── Hardware_Implementation.png
-│   └── System_Architecture.png
+├── videos/
+│   ├── ATM.png
+│   ├── ATM_Hardware_Demonstration.mp4
+│   └── ATM_Transaction_Log_Demonstration.mp4
 │
-├── Logs/
-│   └── ATM_Transaction_Log.txt
-│
-└── Simulation/
-```
-
+└── README.md
 # 🧪 Testing and Results
 
 The following test cases are used to validate the application.
